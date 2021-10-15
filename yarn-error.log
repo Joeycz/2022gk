@@ -1,0 +1,46 @@
+Arguments: 
+  /Users/chengzheng1/.nvm/versions/node/v16.11.0/bin/node /Users/chengzheng1/.nvm/versions/node/v16.11.0/bin/yarn
+
+PATH: 
+  /opt/homebrew/bin:/Users/chengzheng1/.nvm/versions/node/v16.11.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/chengzheng1/.nvm/versions/node/v16.11.0/bin:/opt/homebrew/sbin
+
+Yarn version: 
+  1.22.15
+
+Node version: 
+  16.11.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/vue: ETIMEDOUT
+      at Timeout._onTimeout (/Users/chengzheng1/.nvm/versions/node/v16.11.0/lib/node_modules/yarn/lib/cli.js:141545:19)
+      at listOnTimeout (node:internal/timers:557:17)
+      at processTimers (node:internal/timers:500:7)
+
+npm manifest: 
+  {
+    "name": "gk",
+    "version": "0.0.0",
+    "scripts": {
+      "dev": "vite",
+      "build": "vue-tsc --noEmit && vite build",
+      "serve": "vite preview"
+    },
+    "dependencies": {
+      "vue": "^3.2.16"
+    },
+    "devDependencies": {
+      "@vitejs/plugin-vue": "^1.9.3",
+      "typescript": "^4.4.3",
+      "vite": "^2.6.4",
+      "vue-tsc": "^0.3.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
