@@ -8,7 +8,32 @@ import { onMounted, ref, watch } from 'vue'
 import List from './List.vue'
 
 const drawer = ref(false)
+const drawerDataOb = ref({})
 const drawerData = ref([])
+
+const selectedData = ref([])
+
+function isInSelected (code: string, data) {
+  const testData = data || selectedData.value
+  return testData.map(sitem => sitem['职位代码']).indexOf(code) != -1
+}
+
+function handleAdd () {
+  if (!isInSelected(drawerDataOb.value['职位代码'])) {
+    selectedData.value.push(drawerDataOb.value)
+    window.localStorage.setItem('gkselected', JSON.stringify(selectedData.value))
+    drawer.value = false
+  }
+}
+
+function handleRemove () {
+  if (isInSelected(drawerDataOb.value['职位代码'])) {
+    const index = selectedData.value.map(sitem => sitem['职位代码']).findIndex(item => item == drawerDataOb.value['职位代码'])
+    selectedData.value.splice(index, 1)
+    window.localStorage.setItem('gkselected', JSON.stringify(selectedData.value))
+    drawer.value = false
+  }
+}
 
 const tabList = ref([
   {
@@ -114,6 +139,38 @@ function filterData () {
     tabList.value[index].data = item.data.filter(ite => {
       return (!place.value || ite['工作地点'].match(new RegExp(place.value)))
         && ite['学历'].match(new RegExp(xueli.value))
+        && !ite['备注'].match(new RegExp('限男性'))
+        && !ite['备注'].match(new RegExp('法语'))
+        && !ite['备注'].match(new RegExp('英语6级'))
+        && !ite['备注'].match(new RegExp('英语专业'))
+        && !ite['备注'].match(new RegExp('英语口笔译'))
+        && !ite['备注'].match(new RegExp('土耳其语'))
+        && !ite['备注'].match(new RegExp('阿拉伯语'))
+        && !ite['备注'].match(new RegExp('西班牙语'))
+        && !ite['备注'].match(new RegExp('俄语'))
+        && !ite['备注'].match(new RegExp('日语'))
+        && !ite['备注'].match(new RegExp('德语'))
+        && !ite['备注'].match(new RegExp('朝鲜语'))
+        && !ite['备注'].match(new RegExp('葡萄牙语'))
+        && !ite['备注'].match(new RegExp('意大利语'))
+        && !ite['备注'].match(new RegExp('缅甸语'))
+        && !ite['备注'].match(new RegExp('老挝语'))
+        && !ite['备注'].match(new RegExp('越南语'))
+        && !ite['备注'].match(new RegExp('限2022年应届毕业生'))
+        && !ite['备注'].match(new RegExp('2022年应届高校毕业生'))
+        && !ite['专业'].match(new RegExp('会计'))
+        && !ite['专业'].match(new RegExp('核能科学'))
+        && !(ite['专业'] == '建筑学')
+        && !(ite['专业'] == '博物馆学')
+        && !ite['专业'].match(new RegExp('法学'))
+        && !ite['专业'].match(new RegExp('设计学'))
+        && !ite['专业'].match(new RegExp('播音与主持艺术'))
+        && !ite['专业'].match(new RegExp('计算机科学与技术'))
+        && !ite['专业'].match(new RegExp('电气工程及其自动化'))
+        && !ite['专业'].match(new RegExp('自动化类'))
+        && !ite['专业'].match(new RegExp('满文'))
+        && ite['基层工作最低年限'].match(new RegExp('无限制'))
+        && ite['服务基层项目工作经历'].match(new RegExp('无限制'))
     })
   })
 }
@@ -121,10 +178,15 @@ function filterData () {
 function handleShowDetail (data: any) {
   drawer.value = true
   drawerData.value = Object.entries(data)
+  drawerDataOb.value = data
 }
 
 onMounted(() => {
   filterData()
+  const localdata = window.localStorage.getItem('gkselected')
+  if (localdata) {
+    selectedData.value = JSON.parse(localdata)
+  }
 })
 </script>
 
@@ -161,7 +223,12 @@ onMounted(() => {
       :key="index"
       :label="item.label + `(${item.data.length})`"
       :name="item.name">
-      <List :list="item.data" @showDetail="handleShowDetail"></List>
+      <List :list="item.data" @showDetail="handleShowDetail" type="selected" :selectedData="selectedData" :isSelected="isInSelected"></List>
+    </el-tab-pane>
+    <el-tab-pane
+      :label="`候选(${selectedData.length})`"
+      name="候选">
+      <List :list="selectedData" @showDetail="handleShowDetail"></List>
     </el-tab-pane>
   </el-tabs>
 
@@ -171,6 +238,12 @@ onMounted(() => {
     size="50%"
     custom-class="gkdrawer"
   >
+    <template v-slot:title>
+      <div class="action-box">
+        <el-button type="primary" @click="handleAdd" :disabled="isInSelected(drawerDataOb['职位代码'])">加入待选</el-button>
+        <el-button type="danger" @click="handleRemove" :disabled="!isInSelected(drawerDataOb['职位代码'])">从待选中去除</el-button>
+      </div>
+    </template>
     <div class="detail-box">
       <div class="detail-item" v-for="(item, index) in drawerData" :key="index">
         <div class="item-tit">{{item[0]}}：</div>
@@ -180,6 +253,7 @@ onMounted(() => {
         <div class="item-con" v-else>{{item[1]}}</div>
       </div>
     </div>
+    
   </el-drawer>
 </template>
 
